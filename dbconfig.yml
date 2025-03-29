@@ -1,0 +1,4 @@
+development:
+  dialect: mysql
+  dir: migrations
+  datasource: "animegame:mysecretpassword@tcp(127.0.0.1:3326)/myaglist?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=true"

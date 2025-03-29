@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  myaglist-mysql:
+    image: mysql:latest
+    container_name: myaglist-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: myaglist
+      MYSQL_USER: animegame
+      MYSQL_PASSWORD: mysecretpassword
+    ports:
+      - "127.0.0.1:3326:3306"
+    volumes:
+      - myaglist_mysql_data:/var/lib/mysql
+  myaglist-redis:
+    image: redis:7.2
+    restart: always
+    container_name: myaglist-redis
+    ports:
+      - "127.0.0.1:6388:6379"
+    command: redis-server --save 60 1 --loglevel warning --requirepass myanimegamepassword
+    volumes:
+      - myaglist_redis_data:/data
+
+volumes:
+  myaglist_mysql_data:
+  myaglist_redis_data:
+
