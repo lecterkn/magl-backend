@@ -23,6 +23,34 @@ definitions:
     - password
     - username
     type: object
+  response.CategoryListResponse:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.CategoryResponse'
+        type: array
+    required:
+    - list
+    type: object
+  response.CategoryResponse:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      imageUrl:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    required:
+    - description
+    - id
+    - name
+    type: object
   response.UserSigninResponse:
     properties:
       accessToken:
@@ -59,6 +87,52 @@ info:
   title: MyAnimeGameList
   version: "1.0"
 paths:
+  /categories:
+    get:
+      description: カテゴリを一覧取得
+      parameters:
+      - description: 検索キーワード
+        in: query
+        name: keyword
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.CategoryListResponse'
+      summary: GetCategories
+      tags:
+      - category
+    post:
+      description: カテゴリを新規作成
+      parameters:
+      - description: 画像ファイル
+        in: formData
+        name: image
+        required: true
+        type: file
+      - description: カテゴリ名
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: カテゴリ概要
+        in: formData
+        name: description
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: CreateCategory
+      tags:
+      - category
   /signin:
     post:
       description: ユーザーのサインインを行う

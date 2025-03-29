@@ -21,19 +21,23 @@ var databaseSet = wire.NewSet(
 
 var repositorySet = wire.NewSet(
 	mysqlRepo.NewUserRepositoryImpl,
+	mysqlRepo.NewCategoryRepositoryImpl,
 	redisRepo.NewTokenRepositoryImpl,
 )
 
 var usecaseSet = wire.NewSet(
 	usecase.NewAuthorizationUsecase,
+	usecase.NewCategoryUsecase,
 )
 
 var handlerSet = wire.NewSet(
 	handler.NewAuthorizationHandler,
+	handler.NewCategoryHandler,
 )
 
 type HandlerSet struct {
 	AuthorizationHandler *handler.AuthorizationHandler
+	CategoryHandler      *handler.CategoryHandler
 }
 
 func InitializeHandlerSet() *HandlerSet {
