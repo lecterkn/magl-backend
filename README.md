@@ -1,1 +1,1 @@
-# Goat Backend
+# MyAnimeGameList Backend

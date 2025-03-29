@@ -1,0 +1,4 @@
+# environment
+.env
+# air
+tmp/*
