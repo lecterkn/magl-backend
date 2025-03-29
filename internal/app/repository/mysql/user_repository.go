@@ -2,7 +2,6 @@ package mysql
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -23,14 +22,15 @@ func NewUserRepositoryImpl(database *sqlx.DB) port.UserRepository {
 
 func (r *UserRepositoryImpl) Create(ctx context.Context, userEntity *entity.UserEntity) error {
 	query := `
-        INSERT INTO users(id, name, email, password, created_at, updated_at)
-        VALUES (:id, :name, :email, :password, :createdAt, :updatedAt)
+        INSERT INTO users(id, name, email, password, role, created_at, updated_at)
+        VALUES (:id, :name, :email, :password, :role, :createdAt, :updatedAt)
     `
 	return RunInTx(ctx, r.database, func(tx *sqlx.Tx) error {
 		_, err := tx.NamedExec(query, map[string]any{
 			"id":        userEntity.Id[:],
 			"name":      userEntity.Name,
 			"email":     userEntity.Email,
+			"role":      userEntity.Role.Permission,
 			"password":  userEntity.Password,
 			"createdAt": userEntity.CreatedAt,
 			"updatedAt": userEntity.UpdatedAt,
@@ -41,14 +41,29 @@ func (r *UserRepositoryImpl) Create(ctx context.Context, userEntity *entity.User
 
 func (r *UserRepositoryImpl) FindByName(ctx context.Context, name string) (*entity.UserEntity, error) {
 	query := `
-        SELECT id, name, email, password, created_at, updated_at
+        SELECT id, name, email, password, role, created_at, updated_at
         FROM users
         WHERE name = ?
     `
 	userModel := model.UserModel{}
 	err := RunInTx(ctx, r.database, func(tx *sqlx.Tx) error {
-		fmt.Println(name)
 		return tx.Get(&userModel, query, name)
+	})
+	if err != nil {
+		return nil, err
+	}
+	return r.toEntity(&userModel)
+}
+
+func (r *UserRepositoryImpl) FindById(ctx context.Context, id uuid.UUID) (*entity.UserEntity, error) {
+	query := `
+        SELECT id, name, email, password, role, created_at, updated_at
+        FROM users
+        WHERE id = ?
+    `
+	userModel := model.UserModel{}
+	err := RunInTx(ctx, r.database, func(tx *sqlx.Tx) error {
+		return tx.Get(&userModel, query, id[:])
 	})
 	if err != nil {
 		return nil, err
@@ -62,10 +77,13 @@ func (r *UserRepositoryImpl) toEntity(userModel *model.UserModel) (*entity.UserE
 		return nil, err
 	}
 	return &entity.UserEntity{
-		Id:        id,
-		Name:      userModel.Name,
-		Email:     userModel.Email,
-		Password:  userModel.Password,
+		Id:       id,
+		Name:     userModel.Name,
+		Email:    userModel.Email,
+		Password: userModel.Password,
+		Role: entity.RoleEntity{
+			Permission: entity.Permission(userModel.Role),
+		},
 		CreatedAt: userModel.CreatedAt,
 		UpdatedAt: userModel.UpdatedAt,
 	}, nil

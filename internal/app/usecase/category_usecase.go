@@ -2,7 +2,9 @@ package usecase
 
 import (
 	"context"
+	"errors"
 
+	"github.com/google/uuid"
 	"github.com/lecterkn/goat_backend/internal/app/entity"
 	"github.com/lecterkn/goat_backend/internal/app/port"
 	"github.com/lecterkn/goat_backend/internal/app/usecase/input"
@@ -10,19 +12,29 @@ import (
 )
 
 type CategoryUsecase struct {
+	userRepository     port.UserRepository
 	categoryRepository port.CategoryRepository
 }
 
 func NewCategoryUsecase(
+	userRepository port.UserRepository,
 	categoryRepository port.CategoryRepository,
 ) *CategoryUsecase {
 	return &CategoryUsecase{
+		userRepository,
 		categoryRepository,
 	}
 }
 
 // カテゴリを新規作成
-func (u *CategoryUsecase) CreateCategory(cmd input.CategoryCreateInput) error {
+func (u *CategoryUsecase) CreateCategory(userId uuid.UUID, cmd input.CategoryCreateInput) error {
+	userEntity, err := u.userRepository.FindById(context.Background(), userId)
+	if err != nil {
+		return err
+	}
+	if !u.canCreateCategory(userEntity) {
+		return errors.New("permission error")
+	}
 	var imageUrl *string = nil
 	// TODO: ファイルアップロード
 	if cmd.ImageFile != nil {
@@ -47,4 +59,11 @@ func (u *CategoryUsecase) GetCategories(cmd input.CategoryQueryInput) ([]output.
 		outputList = append(outputList, output.CategoryQueryOutput(categoryEntity))
 	}
 	return outputList, nil
+}
+
+func (u *CategoryUsecase) canCreateCategory(userEntity *entity.UserEntity) bool {
+	if userEntity.Role == nil {
+		return false
+	}
+	return userEntity.Role.IsAdministrator() || userEntity.Role.IsRoot()
 }

@@ -31,7 +31,8 @@ func NewStoryEntity(categoryEntity CategoryEntity, title, episode string, imageU
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
-	if err := validator.New().Struct(storyEntity); err != nil {
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	if err := validate.Struct(storyEntity); err != nil {
 		return nil, err
 	}
 	return &storyEntity, nil

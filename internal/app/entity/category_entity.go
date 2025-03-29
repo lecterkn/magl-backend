@@ -30,7 +30,8 @@ func NewCategoryEntity(name, description string, imageUrl *string) (*CategoryEnt
 		UpdatedAt:   time.Now(),
 	}
 	// バリデーション
-	if err := validator.New().Struct(categoryEntity); err != nil {
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	if err := validate.Struct(categoryEntity); err != nil {
 		return nil, err
 	}
 	return &categoryEntity, nil

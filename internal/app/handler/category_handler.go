@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/lecterkn/goat_backend/internal/app/handler/response"
 	"github.com/lecterkn/goat_backend/internal/app/usecase"
@@ -21,17 +22,23 @@ func NewCategoryHandler(
 	}
 }
 
-//	@summary		CreateCategory
-//	@description	カテゴリを新規作成
-//	@tags			category
-//	@produce		json
-//	@security		BearerAuth
-//	@param			image		formData	file	true	"画像ファイル"
-//	@param			name		formData	string	true	"カテゴリ名"
-//	@param			description	formData	string	true	"カテゴリ概要"
-//	@success		204
-//	@router			/categories [post]
+// @summary		CreateCategory
+// @description	カテゴリを新規作成
+// @tags			category
+// @produce		json
+// @security		BearerAuth
+// @param			image		formData	file	true	"画像ファイル"
+// @param			name		formData	string	true	"カテゴリ名"
+// @param			description	formData	string	true	"カテゴリ概要"
+// @success		204
+// @router			/categories [post]
 func (h *CategoryHandler) Create(ctx echo.Context) error {
+	userId, err := uuid.Parse(ctx.Get("userId").(string))
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, response.ErrorResponse{
+			Message: "internal error \"authorization\"",
+		})
+	}
 	name := ctx.FormValue("name")
 	description := ctx.FormValue("description")
 	imageFile, err := ctx.FormFile("image")
@@ -40,7 +47,7 @@ func (h *CategoryHandler) Create(ctx echo.Context) error {
 			Message: "invalid image",
 		})
 	}
-	err = h.categoryUsecase.CreateCategory(input.CategoryCreateInput{
+	err = h.categoryUsecase.CreateCategory(userId, input.CategoryCreateInput{
 		Name:        name,
 		Description: description,
 		ImageFile:   imageFile,
@@ -53,13 +60,13 @@ func (h *CategoryHandler) Create(ctx echo.Context) error {
 	return ctx.NoContent(http.StatusNoContent)
 }
 
-//	@summary		GetCategories
-//	@description	カテゴリを一覧取得
-//	@tags			category
-//	@produce		json
-//	@param			keyword	query		string	false	"検索キーワード"
-//	@success		200		{object}	response.CategoryListResponse
-//	@router			/categories [get]
+// @summary		GetCategories
+// @description	カテゴリを一覧取得
+// @tags			category
+// @produce		json
+// @param			keyword	query		string	false	"検索キーワード"
+// @success		200		{object}	response.CategoryListResponse
+// @router			/categories [get]
 func (h *CategoryHandler) FindAll(ctx echo.Context) error {
 	var keyword *string = nil
 	if ctx.QueryParams().Has("keyword") {
