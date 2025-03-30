@@ -2,6 +2,7 @@ package entity
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -9,13 +10,13 @@ import (
 type Permission int
 
 const (
-	Standard      Permission = iota // 0
+	General       Permission = iota // 0
 	Administrator                   // 1
 	Root                            // 2
 )
 
 type RoleEntity struct {
-	Permission Permission `validate:"required,min=0,max=2"`
+	Permission Permission `validate:"min=0,max=2"`
 }
 
 func NewRoleEntity(permission int) (*RoleEntity, error) {
@@ -23,6 +24,7 @@ func NewRoleEntity(permission int) (*RoleEntity, error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(perm)
 	roleEntity := RoleEntity{
 		Permission: perm,
 	}
@@ -40,12 +42,12 @@ func (e *RoleEntity) GetPermission() string {
 	case Administrator:
 		return "Administrator"
 	default:
-		return "Standard"
+		return "General"
 	}
 }
 
 func (e *RoleEntity) IsStandard() bool {
-	return e.Permission == Standard
+	return e.Permission == General
 }
 
 func (e *RoleEntity) IsAdministrator() bool {
@@ -58,12 +60,12 @@ func (e *RoleEntity) IsRoot() bool {
 
 func toPermission(permission int) (Permission, error) {
 	switch permission {
-	case int(Standard):
-		return Standard, nil
+	case int(General):
+		return General, nil
 	case int(Administrator):
 		return Administrator, nil
 	case int(Root):
 		return Root, nil
 	}
-	return Standard, errors.New("invalid permission")
+	return General, errors.New("invalid permission")
 }
