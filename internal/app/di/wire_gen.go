@@ -30,10 +30,13 @@ func InitializeHandlerSet() *HandlerSet {
 	storyRepository := mysql.NewStoryRepositoryImpl(db)
 	storyUsecase := usecase.NewStoryUsecase(userRepository, storyRepository, categoryRepository)
 	storyHandler := handler.NewStoryHandler(storyUsecase)
+	userUsecase := usecase.NewUserUsecase(userRepository)
+	userHandler := handler.NewUserHandler(userUsecase)
 	diHandlerSet := &HandlerSet{
 		AuthorizationHandler: authorizationHandler,
 		CategoryHandler:      categoryHandler,
 		StoryHandler:         storyHandler,
+		UserHandler:          userHandler,
 	}
 	return diHandlerSet
 }
@@ -44,12 +47,13 @@ var databaseSet = wire.NewSet(database.GetMySQLConnection, database.GetRedisClie
 
 var repositorySet = wire.NewSet(mysql.NewUserRepositoryImpl, mysql.NewCategoryRepositoryImpl, mysql.NewStoryRepositoryImpl, redis.NewTokenRepositoryImpl)
 
-var usecaseSet = wire.NewSet(usecase.NewAuthorizationUsecase, usecase.NewCategoryUsecase, usecase.NewStoryUsecase)
+var usecaseSet = wire.NewSet(usecase.NewAuthorizationUsecase, usecase.NewCategoryUsecase, usecase.NewStoryUsecase, usecase.NewUserUsecase)
 
-var handlerSet = wire.NewSet(handler.NewAuthorizationHandler, handler.NewCategoryHandler, handler.NewStoryHandler)
+var handlerSet = wire.NewSet(handler.NewAuthorizationHandler, handler.NewCategoryHandler, handler.NewStoryHandler, handler.NewUserHandler)
 
 type HandlerSet struct {
 	AuthorizationHandler *handler.AuthorizationHandler
 	CategoryHandler      *handler.CategoryHandler
 	StoryHandler         *handler.StoryHandler
+	UserHandler          *handler.UserHandler
 }

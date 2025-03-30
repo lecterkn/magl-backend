@@ -30,18 +30,21 @@ var usecaseSet = wire.NewSet(
 	usecase.NewAuthorizationUsecase,
 	usecase.NewCategoryUsecase,
 	usecase.NewStoryUsecase,
+	usecase.NewUserUsecase,
 )
 
 var handlerSet = wire.NewSet(
 	handler.NewAuthorizationHandler,
 	handler.NewCategoryHandler,
 	handler.NewStoryHandler,
+	handler.NewUserHandler,
 )
 
 type HandlerSet struct {
 	AuthorizationHandler *handler.AuthorizationHandler
 	CategoryHandler      *handler.CategoryHandler
 	StoryHandler         *handler.StoryHandler
+	UserHandler          *handler.UserHandler
 }
 
 func InitializeHandlerSet() *HandlerSet {

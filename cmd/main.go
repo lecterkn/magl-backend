@@ -47,6 +47,10 @@ func setRouting(app *echo.Echo) {
 	// Authorization
 	api.POST("/signup", handlerSet.AuthorizationHandler.SignUp)
 	api.POST("/signin", handlerSet.AuthorizationHandler.SignIn)
+	api.POST("/refresh", handlerSet.AuthorizationHandler.Refresh)
+
+	// User
+	auth.GET("/me", handlerSet.UserHandler.GetMe)
 
 	// Category
 	auth.POST("/categories", handlerSet.CategoryHandler.Create)
