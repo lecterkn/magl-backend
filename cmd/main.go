@@ -41,8 +41,17 @@ func setRouting(app *echo.Echo) {
 	handlerSet := di.InitializeHandlerSet()
 
 	api := app.Group("api")
+	auth := api.Group("")
+	auth.Use(handlerSet.AuthorizationHandler.Authorization)
 
 	// Authorization
 	api.POST("/signup", handlerSet.AuthorizationHandler.SignUp)
 	api.POST("/signin", handlerSet.AuthorizationHandler.SignIn)
+
+	// Category
+	auth.POST("/categories", handlerSet.CategoryHandler.Create)
+	api.GET("/categories", handlerSet.CategoryHandler.FindAll)
+
+	// Story
+	auth.POST("/stories", handlerSet.StoryHandler.Create)
 }

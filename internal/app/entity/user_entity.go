@@ -12,12 +12,13 @@ type UserEntity struct {
 	Id        uuid.UUID
 	Name      string `validate:"required,min=4,max=32"`
 	Email     string `validate:"required,email"`
+	Role      RoleEntity
 	Password  []byte
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
-func NewUserEntity(name, email, password string) (*UserEntity, error) {
+func NewUserEntity(name, email, password string, role int) (*UserEntity, error) {
 	id, err := uuid.NewV7()
 	if err != nil {
 		return nil, err
@@ -26,11 +27,16 @@ func NewUserEntity(name, email, password string) (*UserEntity, error) {
 	if err != nil {
 		return nil, err
 	}
+	roleEntity, err := NewRoleEntity(role)
+	if err != nil {
+		return nil, err
+	}
 	userEntity := UserEntity{
 		Id:        id,
 		Name:      name,
 		Email:     email,
 		Password:  hashPass,
+		Role:      *roleEntity,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}

@@ -24,8 +24,16 @@ func InitializeHandlerSet() *HandlerSet {
 	tokenRepository := redis.NewTokenRepositoryImpl(client)
 	authorizationUsecase := usecase.NewAuthorizationUsecase(userRepository, tokenRepository)
 	authorizationHandler := handler.NewAuthorizationHandler(authorizationUsecase)
+	categoryRepository := mysql.NewCategoryRepositoryImpl(db)
+	categoryUsecase := usecase.NewCategoryUsecase(userRepository, categoryRepository)
+	categoryHandler := handler.NewCategoryHandler(categoryUsecase)
+	storyRepository := mysql.NewStoryRepositoryImpl(db)
+	storyUsecase := usecase.NewStoryUsecase(userRepository, storyRepository, categoryRepository)
+	storyHandler := handler.NewStoryHandler(storyUsecase)
 	diHandlerSet := &HandlerSet{
 		AuthorizationHandler: authorizationHandler,
+		CategoryHandler:      categoryHandler,
+		StoryHandler:         storyHandler,
 	}
 	return diHandlerSet
 }
@@ -34,12 +42,14 @@ func InitializeHandlerSet() *HandlerSet {
 
 var databaseSet = wire.NewSet(database.GetMySQLConnection, database.GetRedisClient)
 
-var repositorySet = wire.NewSet(mysql.NewUserRepositoryImpl, redis.NewTokenRepositoryImpl)
+var repositorySet = wire.NewSet(mysql.NewUserRepositoryImpl, mysql.NewCategoryRepositoryImpl, mysql.NewStoryRepositoryImpl, redis.NewTokenRepositoryImpl)
 
-var usecaseSet = wire.NewSet(usecase.NewAuthorizationUsecase)
+var usecaseSet = wire.NewSet(usecase.NewAuthorizationUsecase, usecase.NewCategoryUsecase, usecase.NewStoryUsecase)
 
-var handlerSet = wire.NewSet(handler.NewAuthorizationHandler)
+var handlerSet = wire.NewSet(handler.NewAuthorizationHandler, handler.NewCategoryHandler, handler.NewStoryHandler)
 
 type HandlerSet struct {
 	AuthorizationHandler *handler.AuthorizationHandler
+	CategoryHandler      *handler.CategoryHandler
+	StoryHandler         *handler.StoryHandler
 }
