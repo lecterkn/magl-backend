@@ -50,8 +50,9 @@ func setRouting(app *echo.Echo) {
 
 	// Category
 	auth.POST("/categories", handlerSet.CategoryHandler.Create)
-	api.GET("/categories", handlerSet.CategoryHandler.FindAll)
+	api.GET("/categories", handlerSet.CategoryHandler.GetCategories)
 
 	// Story
 	auth.POST("/stories", handlerSet.StoryHandler.Create)
+	api.GET("/stories", handlerSet.StoryHandler.GetStories)
 }

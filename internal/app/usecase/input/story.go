@@ -13,3 +13,7 @@ type StoryCreateInput struct {
 	Description string
 	ImageFile   *multipart.FileHeader
 }
+
+type StoryQueryInput struct {
+	Keyword *string
+}
