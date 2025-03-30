@@ -13,8 +13,9 @@ import (
 )
 
 const (
-	AUTHORIZATION_HEADER = "Authorization"
-	AUTHORIZATION_PREFIX = "Bearer "
+	AUTHORIZATION_HEADER      = "Authorization"
+	AUTHORIZATION_PREFIX      = "Bearer "
+	REFRESH_TOKEN_HEADER_NAME = "x-refresh-token"
 )
 
 type AuthorizationHandler struct {
@@ -29,13 +30,14 @@ func NewAuthorizationHandler(
 	}
 }
 
-// @summary		SignUp
-// @description	ユーザーのサインアップを行う
-// @tags			user
-// @produce		json
-// @param			request	body		request.UserSignupRequest	true	"ユーザーログインリクエスト"
-// @success		200		{object}	response.UserSignupResponse
-// @router			/signup [post]
+//	@summary		SignUp
+//	@description	ユーザーのサインアップを行う
+//	@tags			auth
+//	@produce		json
+//	@security		BearerAuth
+//	@param			request	body		request.UserSignupRequest	true	"ユーザーログインリクエスト"
+//	@success		200		{object}	response.UserResponse
+//	@router			/signup [get]
 func (h *AuthorizationHandler) SignUp(ctx echo.Context) error {
 	userSignupRequest := request.UserSignupRequest{}
 	if err := ctx.Bind(&userSignupRequest); err != nil {
@@ -53,16 +55,16 @@ func (h *AuthorizationHandler) SignUp(ctx echo.Context) error {
 			Message: err.Error(),
 		})
 	}
-	return ctx.JSON(http.StatusOK, response.UserSignupResponse(*output))
+	return ctx.JSON(http.StatusOK, response.UserResponse(*output))
 }
 
-// @summary		SignIn
-// @description	ユーザーのサインインを行う
-// @tags			user
-// @produce		json
-// @param			request	body		request.UserSigninRequest	true	"ユーザーログインリクエスト"
-// @success		200		{object}	response.UserSigninResponse
-// @router			/signin [post]
+//	@summary		SignIn
+//	@description	ユーザーのサインインを行う
+//	@tags			auth
+//	@produce		json
+//	@param			request	body		request.UserSigninRequest	true	"ユーザーログインリクエスト"
+//	@success		200		{object}	response.UserSigninResponse
+//	@router			/signin [post]
 func (h *AuthorizationHandler) SignIn(ctx echo.Context) error {
 	userSigninRequest := request.UserSigninRequest{}
 	if err := ctx.Bind(&userSigninRequest); err != nil {
@@ -80,6 +82,28 @@ func (h *AuthorizationHandler) SignIn(ctx echo.Context) error {
 		})
 	}
 	return ctx.JSON(http.StatusOK, response.UserSigninResponse(*output))
+}
+
+//	@summary		Refresh
+//	@description	アクセストークンをリフレッシュする
+//	@tags			auth
+//	@produce		json
+//	@param			x-refresh-token	header		string	true	"リフレッシュトークン"
+//	@success		200				{object}	response.RefreshResponse
+//	@router			/refresh [post]
+func (h *AuthorizationHandler) Refresh(ctx echo.Context) error {
+	// ヘッダーからリフレッシュトークン取得
+	refreshToken := ctx.Request().Header.Get(REFRESH_TOKEN_HEADER_NAME)
+	// リフレッシュ処理
+	output, err := h.authUsecase.RefreshAccessToken(input.RefreshInput{
+		RefreshToken: refreshToken,
+	})
+	if err != nil {
+		return ctx.JSON(http.StatusUnauthorized, response.ErrorResponse{
+			Message: err.Error(),
+		})
+	}
+	return ctx.JSON(http.StatusOK, response.RefreshResponse(*output))
 }
 
 // JWT認証を行うミドルウェア

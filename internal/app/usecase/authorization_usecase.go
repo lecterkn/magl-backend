@@ -3,7 +3,10 @@ package usecase
 import (
 	"context"
 	"errors"
+	"time"
 
+	"github.com/google/uuid"
+	"github.com/lecterkn/goat_backend/internal/app/common"
 	"github.com/lecterkn/goat_backend/internal/app/entity"
 	"github.com/lecterkn/goat_backend/internal/app/port"
 	"github.com/lecterkn/goat_backend/internal/app/usecase/input"
@@ -27,7 +30,7 @@ func NewAuthorizationUsecase(
 }
 
 // ユーザーを新規作成する
-func (u *AuthorizationUsecase) CreateUser(cmd input.UserCreateInput) (*output.UserCreateOutput, error) {
+func (u *AuthorizationUsecase) CreateUser(cmd input.UserCreateInput) (*output.UserOutput, error) {
 	userEntity, err := entity.NewUserEntity(cmd.Username, cmd.Email, cmd.Password, 0)
 	if err != nil {
 		return nil, err
@@ -36,7 +39,7 @@ func (u *AuthorizationUsecase) CreateUser(cmd input.UserCreateInput) (*output.Us
 	if err != nil {
 		return nil, err
 	}
-	return &output.UserCreateOutput{
+	return &output.UserOutput{
 		Id:        userEntity.Id,
 		Name:      userEntity.Name,
 		Email:     userEntity.Email,
@@ -74,4 +77,48 @@ func (u *AuthorizationUsecase) LoginUser(cmd input.UserLoginInput) (*output.User
 		AccessToken:  accessTokenEntity.Token,
 		RefreshToken: refreshTokenEntity.Token,
 	}, nil
+}
+
+func (u *AuthorizationUsecase) RefreshAccessToken(cmd input.RefreshInput) (*output.RefreshOutput, error) {
+	// トークンをデコード
+	claims, err := common.DecodeToken(cmd.RefreshToken)
+	if err != nil {
+		return nil, err
+	}
+	// sub取得
+	sub, err := claims.GetSubject()
+	if err != nil {
+		return nil, err
+	}
+	// UUIDに変換
+	userId, err := uuid.Parse(sub)
+	if err != nil {
+		return nil, err
+	}
+	// 対象ユーザーのリフレッシュトークン一覧取得
+	refreshTokenEntities, err := u.tokenRepository.FindRefreshTokenByUserId(userId)
+	if err != nil {
+		return nil, errors.New("ユーザーの認証情報が見つかりませんでした")
+	}
+	// トークン確認
+	for _, refreshTokenEntity := range refreshTokenEntities {
+		// 期限確認
+		if !refreshTokenEntity.ExpiresIn.After(time.Now()) {
+			continue
+		}
+		// 一致した場合
+		if refreshTokenEntity.Token == cmd.RefreshToken {
+			// アクセストークン発行
+			accessTokenEntity, err := entity.NewAccessTokenEntity(userId)
+			if err != nil {
+				return nil, err
+			}
+			return &output.RefreshOutput{
+				AccessToken: accessTokenEntity.Token,
+				ExpiresIn:   accessTokenEntity.ExpiresIn,
+			}, nil
+		}
+	}
+	// 一致するリフレッシュトークンが存在しない場合
+	return nil, errors.New("不正なリフレッシュトークンです")
 }

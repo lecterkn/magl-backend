@@ -51,6 +51,13 @@ definitions:
     - id
     - name
     type: object
+  response.RefreshResponse:
+    properties:
+      accessToken:
+        type: string
+      expiresIn:
+        type: string
+    type: object
   response.StoryListResponse:
     properties:
       list:
@@ -91,17 +98,7 @@ definitions:
     - title
     - updatedAt
     type: object
-  response.UserSigninResponse:
-    properties:
-      accessToken:
-        type: string
-      refreshToken:
-        type: string
-    required:
-    - accessToken
-    - refreshToken
-    type: object
-  response.UserSignupResponse:
+  response.UserResponse:
     properties:
       createdAt:
         type: string
@@ -121,6 +118,16 @@ definitions:
     - id
     - name
     - updatedAt
+    type: object
+  response.UserSigninResponse:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+    required:
+    - accessToken
+    - refreshToken
     type: object
 host: localhost:8993
 info:
@@ -174,6 +181,38 @@ paths:
       summary: CreateCategory
       tags:
       - category
+  /me:
+    get:
+      description: 自身のユーザー情報を取得する
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UserResponse'
+      summary: GetMe
+      tags:
+      - user
+  /refresh:
+    post:
+      description: アクセストークンをリフレッシュする
+      parameters:
+      - description: リフレッシュトークン
+        in: header
+        name: x-refresh-token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.RefreshResponse'
+      summary: Refresh
+      tags:
+      - auth
   /signin:
     post:
       description: ユーザーのサインインを行う
@@ -193,9 +232,9 @@ paths:
             $ref: '#/definitions/response.UserSigninResponse'
       summary: SignIn
       tags:
-      - user
+      - auth
   /signup:
-    post:
+    get:
       description: ユーザーのサインアップを行う
       parameters:
       - description: ユーザーログインリクエスト
@@ -210,10 +249,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.UserSignupResponse'
+            $ref: '#/definitions/response.UserResponse'
+      security:
+      - BearerAuth: []
       summary: SignUp
       tags:
-      - user
+      - auth
   /stories:
     get:
       description: カテゴリを一覧取得

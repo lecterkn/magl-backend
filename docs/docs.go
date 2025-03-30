@@ -85,6 +85,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/me": {
+            "get": {
+                "description": "自身のユーザー情報を取得する",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "GetMe",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.UserResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/refresh": {
+            "post": {
+                "description": "アクセストークンをリフレッシュする",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Refresh",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "リフレッシュトークン",
+                        "name": "x-refresh-token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.RefreshResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/signin": {
             "post": {
                 "description": "ユーザーのサインインを行う",
@@ -92,7 +141,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "auth"
                 ],
                 "summary": "SignIn",
                 "parameters": [
@@ -117,13 +166,18 @@ const docTemplate = `{
             }
         },
         "/signup": {
-            "post": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "ユーザーのサインアップを行う",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "auth"
                 ],
                 "summary": "SignUp",
                 "parameters": [
@@ -141,7 +195,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.UserSignupResponse"
+                            "$ref": "#/definitions/response.UserResponse"
                         }
                     }
                 }
@@ -309,6 +363,17 @@ const docTemplate = `{
                 }
             }
         },
+        "response.RefreshResponse": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "expiresIn": {
+                    "type": "string"
+                }
+            }
+        },
         "response.StoryListResponse": {
             "type": "object",
             "required": [
@@ -366,22 +431,7 @@ const docTemplate = `{
                 }
             }
         },
-        "response.UserSigninResponse": {
-            "type": "object",
-            "required": [
-                "accessToken",
-                "refreshToken"
-            ],
-            "properties": {
-                "accessToken": {
-                    "type": "string"
-                },
-                "refreshToken": {
-                    "type": "string"
-                }
-            }
-        },
-        "response.UserSignupResponse": {
+        "response.UserResponse": {
             "type": "object",
             "required": [
                 "createdAt",
@@ -407,6 +457,21 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.UserSigninResponse": {
+            "type": "object",
+            "required": [
+                "accessToken",
+                "refreshToken"
+            ],
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "refreshToken": {
                     "type": "string"
                 }
             }
