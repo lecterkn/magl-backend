@@ -148,6 +148,32 @@ const docTemplate = `{
             }
         },
         "/stories": {
+            "get": {
+                "description": "カテゴリを一覧取得",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "story"
+                ],
+                "summary": "GetStories",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "検索キーワード",
+                        "name": "keyword",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.StoryListResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -283,6 +309,63 @@ const docTemplate = `{
                 }
             }
         },
+        "response.StoryListResponse": {
+            "type": "object",
+            "required": [
+                "list"
+            ],
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.StoryResponse"
+                    }
+                }
+            }
+        },
+        "response.StoryResponse": {
+            "type": "object",
+            "required": [
+                "categoryId",
+                "categoryName",
+                "createdAt",
+                "description",
+                "episode",
+                "id",
+                "imageUrl",
+                "title",
+                "updatedAt"
+            ],
+            "properties": {
+                "categoryId": {
+                    "type": "string"
+                },
+                "categoryName": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "episode": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "imageUrl": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "response.UserSigninResponse": {
             "type": "object",
             "required": [
@@ -318,6 +401,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "role": {
                     "type": "string"
                 },
                 "updatedAt": {

@@ -62,7 +62,7 @@ func (h *CategoryHandler) Create(ctx echo.Context) error {
 // @param			keyword	query		string	false	"検索キーワード"
 // @success		200		{object}	response.CategoryListResponse
 // @router			/categories [get]
-func (h *CategoryHandler) FindAll(ctx echo.Context) error {
+func (h *CategoryHandler) GetCategories(ctx echo.Context) error {
 	var keyword *string = nil
 	if ctx.QueryParams().Has("keyword") {
 		word := ctx.QueryParam("keyword")

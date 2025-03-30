@@ -51,6 +51,46 @@ definitions:
     - id
     - name
     type: object
+  response.StoryListResponse:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.StoryResponse'
+        type: array
+    required:
+    - list
+    type: object
+  response.StoryResponse:
+    properties:
+      categoryId:
+        type: string
+      categoryName:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      episode:
+        type: string
+      id:
+        type: string
+      imageUrl:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: string
+    required:
+    - categoryId
+    - categoryName
+    - createdAt
+    - description
+    - episode
+    - id
+    - imageUrl
+    - title
+    - updatedAt
+    type: object
   response.UserSigninResponse:
     properties:
       accessToken:
@@ -70,6 +110,8 @@ definitions:
       id:
         type: string
       name:
+        type: string
+      role:
         type: string
       updatedAt:
         type: string
@@ -173,6 +215,23 @@ paths:
       tags:
       - user
   /stories:
+    get:
+      description: カテゴリを一覧取得
+      parameters:
+      - description: 検索キーワード
+        in: query
+        name: keyword
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.StoryListResponse'
+      summary: GetStories
+      tags:
+      - story
     post:
       description: ストーリーを新規作成
       parameters:

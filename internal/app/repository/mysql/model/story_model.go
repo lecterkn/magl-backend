@@ -21,7 +21,7 @@ type StoryAndCategoryModel struct {
 	Title               string         `db:"title"`
 	Episode             string         `db:"episode"`
 	Description         string         `db:"description"`
-	ImageUrl            sql.NullString `db:"description"`
+	ImageUrl            sql.NullString `db:"image_url"`
 	CreatedAt           time.Time      `db:"created_at"`
 	UpdatedAt           time.Time      `db:"updated_at"`
 	CategoryId          []byte         `db:"category_id"`
