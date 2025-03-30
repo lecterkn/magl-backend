@@ -33,6 +33,17 @@ func NewRoleEntity(permission int) (*RoleEntity, error) {
 	return &roleEntity, nil
 }
 
+func (e *RoleEntity) GetPermission() string {
+	switch e.Permission {
+	case Root:
+		return "Root"
+	case Administrator:
+		return "Administrator"
+	default:
+		return "Standard"
+	}
+}
+
 func (e *RoleEntity) IsStandard() bool {
 	return e.Permission == Standard
 }

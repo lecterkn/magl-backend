@@ -10,6 +10,7 @@ type UserSignupResponse struct {
 	Id        uuid.UUID `json:"id" validate:"required"`
 	Name      string    `json:"name" validate:"required"`
 	Email     string    `json:"email" validate:"required"`
+	Role      string    `json:"role", validare:"required"`
 	CreatedAt time.Time `json:"createdAt" validate:"required"`
 	UpdatedAt time.Time `json:"updatedAt" validate:"required"`
 }
