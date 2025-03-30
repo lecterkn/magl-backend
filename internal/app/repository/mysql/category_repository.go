@@ -61,17 +61,10 @@ func (r *CategoryRepositoryImpl) FindAll(ctx context.Context, keyword *string) (
 	categoryModels := []model.CategoryModel{}
 	err := RunInTx(ctx, r.database, func(tx *sqlx.Tx) error {
 		if keyword == nil {
-			err := tx.Select(&categoryModels, query)
-			if err != nil {
-				return err
-			}
+			return tx.Select(&categoryModels, query)
 		} else {
-			err := tx.Select(&categoryModels, query, *keyword)
-			if err != nil {
-				return err
-			}
+			return tx.Select(&categoryModels, query, *keyword)
 		}
-		return nil
 	})
 	if err != nil {
 		return nil, err
@@ -79,25 +72,50 @@ func (r *CategoryRepositoryImpl) FindAll(ctx context.Context, keyword *string) (
 	return r.toEntities(categoryModels)
 }
 
+func (r *CategoryRepositoryImpl) FindById(ctx context.Context, id uuid.UUID) (*entity.CategoryEntity, error) {
+	query := `
+        SELECT id, name, description, image_url, created_at, updated_at
+        FROM categories
+        WHERE id = ?
+        LIMIT 1
+    `
+	categoryModels := model.CategoryModel{}
+	err := RunInTx(ctx, r.database, func(tx *sqlx.Tx) error {
+		return tx.Get(&categoryModels, query)
+	})
+	if err != nil {
+		return nil, err
+	}
+	return r.toEntity(categoryModels)
+}
+
 func (r *CategoryRepositoryImpl) toEntities(models []model.CategoryModel) ([]entity.CategoryEntity, error) {
 	categoryEntities := []entity.CategoryEntity{}
 	for _, categoryModel := range models {
-		id, err := uuid.FromBytes(categoryModel.Id)
+		categoryEntity, err := r.toEntity(*&categoryModel)
 		if err != nil {
 			return nil, err
 		}
-		var imageUrl *string = nil
-		if categoryModel.ImageUrl.Valid {
-			imageUrl = &categoryModel.ImageUrl.String
-		}
-		categoryEntities = append(categoryEntities, entity.CategoryEntity{
-			Id:          id,
-			Name:        categoryModel.Name,
-			Description: categoryModel.Description,
-			ImageUrl:    imageUrl,
-			CreatedAt:   categoryModel.CreatedAt,
-			UpdatedAt:   categoryModel.UpdatedAt,
-		})
+		categoryEntities = append(categoryEntities, *categoryEntity)
 	}
 	return categoryEntities, nil
+}
+
+func (r *CategoryRepositoryImpl) toEntity(categoryModel model.CategoryModel) (*entity.CategoryEntity, error) {
+	id, err := uuid.FromBytes(categoryModel.Id)
+	if err != nil {
+		return nil, err
+	}
+	var imageUrl *string = nil
+	if categoryModel.ImageUrl.Valid {
+		imageUrl = &categoryModel.ImageUrl.String
+	}
+	return &entity.CategoryEntity{
+		Id:          id,
+		Name:        categoryModel.Name,
+		Description: categoryModel.Description,
+		ImageUrl:    imageUrl,
+		CreatedAt:   categoryModel.CreatedAt,
+		UpdatedAt:   categoryModel.UpdatedAt,
+	}, nil
 }

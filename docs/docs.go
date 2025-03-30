@@ -61,8 +61,7 @@ const docTemplate = `{
                         "type": "file",
                         "description": "画像ファイル",
                         "name": "image",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     },
                     {
                         "type": "string",
@@ -144,6 +143,64 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/response.UserSignupResponse"
                         }
+                    }
+                }
+            }
+        },
+        "/stories": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "ストーリーを新規作成",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "story"
+                ],
+                "summary": "CreateStory",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "画像ファイル",
+                        "name": "image",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "カテゴリID",
+                        "name": "categoryId",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ストーリータイトル",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ストーリー区分",
+                        "name": "episode",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ストーリー概要",
+                        "name": "description",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
                     }
                 }
             }

@@ -27,7 +27,7 @@ func NewCategoryHandler(
 // @tags			category
 // @produce		json
 // @security		BearerAuth
-// @param			image		formData	file	true	"画像ファイル"
+// @param			image		formData	file	false	"画像ファイル"
 // @param			name		formData	string	true	"カテゴリ名"
 // @param			description	formData	string	true	"カテゴリ概要"
 // @success		204
@@ -41,12 +41,7 @@ func (h *CategoryHandler) Create(ctx echo.Context) error {
 	}
 	name := ctx.FormValue("name")
 	description := ctx.FormValue("description")
-	imageFile, err := ctx.FormFile("image")
-	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, response.ErrorResponse{
-			Message: "invalid image",
-		})
-	}
+	imageFile, _ := ctx.FormFile("image")
 	err = h.categoryUsecase.CreateCategory(userId, input.CategoryCreateInput{
 		Name:        name,
 		Description: description,

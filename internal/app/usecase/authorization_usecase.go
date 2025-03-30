@@ -28,7 +28,7 @@ func NewAuthorizationUsecase(
 
 // ユーザーを新規作成する
 func (u *AuthorizationUsecase) CreateUser(cmd input.UserCreateInput) (*output.UserCreateOutput, error) {
-	userEntity, err := entity.NewUserEntity(cmd.Username, cmd.Email, cmd.Password)
+	userEntity, err := entity.NewUserEntity(cmd.Username, cmd.Email, cmd.Password, 0)
 	if err != nil {
 		return nil, err
 	}

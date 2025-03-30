@@ -111,7 +111,6 @@ paths:
       - description: 画像ファイル
         in: formData
         name: image
-        required: true
         type: file
       - description: カテゴリ名
         in: formData
@@ -173,6 +172,44 @@ paths:
       summary: SignUp
       tags:
       - user
+  /stories:
+    post:
+      description: ストーリーを新規作成
+      parameters:
+      - description: 画像ファイル
+        in: formData
+        name: image
+        type: file
+      - description: カテゴリID
+        in: formData
+        name: categoryId
+        required: true
+        type: string
+      - description: ストーリータイトル
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: ストーリー区分
+        in: formData
+        name: episode
+        required: true
+        type: string
+      - description: ストーリー概要
+        in: formData
+        name: description
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: CreateStory
+      tags:
+      - story
 securityDefinitions:
   BearerAuth:
     in: header
