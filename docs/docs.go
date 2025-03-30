@@ -443,6 +443,7 @@ const docTemplate = `{
                 "email",
                 "id",
                 "name",
+                "role",
                 "updatedAt"
             ],
             "properties": {

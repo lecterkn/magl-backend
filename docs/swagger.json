@@ -437,6 +437,7 @@
                 "email",
                 "id",
                 "name",
+                "role",
                 "updatedAt"
             ],
             "properties": {
