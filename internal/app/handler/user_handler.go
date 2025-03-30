@@ -21,12 +21,13 @@ func NewUserHandler(
 	}
 }
 
-//	@summary		GetMe
-//	@description	自身のユーザー情報を取得する
-//	@tags			user
-//	@produce		json
-//	@success		200	{object}	response.UserResponse
-//	@router			/me [get]
+// @summary		GetMe
+// @description	自身のユーザー情報を取得する
+// @tags			user
+// @produce		json
+// @security		BearerAuth
+// @success		200	{object}	response.UserResponse
+// @router			/me [get]
 func (h *UserHandler) GetMe(ctx echo.Context) error {
 	userId, err := uuid.Parse(ctx.Get("userId").(string))
 	if err != nil {
