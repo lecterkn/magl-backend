@@ -191,6 +191,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/response.UserResponse'
+      security:
+      - BearerAuth: []
       summary: GetMe
       tags:
       - user
@@ -234,7 +236,7 @@ paths:
       tags:
       - auth
   /signup:
-    get:
+    post:
       description: ユーザーのサインアップを行う
       parameters:
       - description: ユーザーログインリクエスト

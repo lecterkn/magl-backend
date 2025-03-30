@@ -87,6 +87,11 @@ const docTemplate = `{
         },
         "/me": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "自身のユーザー情報を取得する",
                 "produces": [
                     "application/json"
@@ -166,7 +171,7 @@ const docTemplate = `{
             }
         },
         "/signup": {
-            "get": {
+            "post": {
                 "security": [
                     {
                         "BearerAuth": []
