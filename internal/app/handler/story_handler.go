@@ -57,7 +57,7 @@ func (h *StoryHandler) Create(ctx echo.Context) error {
 		ImageFile:   imageFile,
 	})
 	if err != nil {
-		return ctx.JSON(http.StatusOK, response.ErrorResponse{
+		return ctx.JSON(http.StatusInternalServerError, response.ErrorResponse{
 			Message: err.Error(),
 		})
 	}
