@@ -29,6 +29,7 @@ func (r *StoryRepositoryImpl) Create(ctx context.Context, storyEntity *entity.St
 	return RunInTx(ctx, r.database, func(tx *sqlx.Tx) error {
 		queryMap := map[string]any{
 			"id":          storyEntity.Id[:],
+			"title":       storyEntity.Title,
 			"categoryId":  storyEntity.Category.Id[:],
 			"episode":     storyEntity.Episode,
 			"description": storyEntity.Description,
