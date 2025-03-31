@@ -81,18 +81,18 @@ func (r *CategoryRepositoryImpl) FindById(ctx context.Context, id uuid.UUID) (*e
     `
 	categoryModels := model.CategoryModel{}
 	err := RunInTx(ctx, r.database, func(tx *sqlx.Tx) error {
-		return tx.Get(&categoryModels, query)
+		return tx.Get(&categoryModels, query, id[:])
 	})
 	if err != nil {
 		return nil, err
 	}
-	return r.toEntity(categoryModels)
+	return r.toEntity(&categoryModels)
 }
 
 func (r *CategoryRepositoryImpl) toEntities(models []model.CategoryModel) ([]entity.CategoryEntity, error) {
 	categoryEntities := []entity.CategoryEntity{}
 	for _, categoryModel := range models {
-		categoryEntity, err := r.toEntity(*&categoryModel)
+		categoryEntity, err := r.toEntity(&categoryModel)
 		if err != nil {
 			return nil, err
 		}
@@ -101,7 +101,7 @@ func (r *CategoryRepositoryImpl) toEntities(models []model.CategoryModel) ([]ent
 	return categoryEntities, nil
 }
 
-func (r *CategoryRepositoryImpl) toEntity(categoryModel model.CategoryModel) (*entity.CategoryEntity, error) {
+func (r *CategoryRepositoryImpl) toEntity(categoryModel *model.CategoryModel) (*entity.CategoryEntity, error) {
 	id, err := uuid.FromBytes(categoryModel.Id)
 	if err != nil {
 		return nil, err
