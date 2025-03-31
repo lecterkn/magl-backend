@@ -258,7 +258,7 @@
                     {
                         "type": "string",
                         "description": "ストーリータイトル",
-                        "name": "name",
+                        "name": "title",
                         "in": "formData",
                         "required": true
                     },
@@ -437,6 +437,7 @@
                 "email",
                 "id",
                 "name",
+                "role",
                 "updatedAt"
             ],
             "properties": {

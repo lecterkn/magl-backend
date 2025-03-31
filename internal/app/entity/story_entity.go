@@ -12,7 +12,7 @@ type StoryEntity struct {
 	Category    CategoryEntity
 	Title       string `validate:"required,min=3,max=64"`
 	Episode     string `validate:"required,min=1,max=64"`
-	Description string `validate:"required,min=0,max=1024"`
+	Description string `validate:"min=0,max=1024"`
 	ImageUrl    *string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time

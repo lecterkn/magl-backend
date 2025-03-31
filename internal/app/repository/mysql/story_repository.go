@@ -24,11 +24,12 @@ func NewStoryRepositoryImpl(database *sqlx.DB) port.StoryRepository {
 func (r *StoryRepositoryImpl) Create(ctx context.Context, storyEntity *entity.StoryEntity) error {
 	query := `
         INSERT INTO stories(id, category_id, title, episode, description, image_url, created_at, updated_at)
-        VALUES(:id, :categoryId, :episode, :description, :imageUrl, :createdAt, :updatedAt)
+        VALUES(:id, :categoryId, :title, :episode, :description, :imageUrl, :createdAt, :updatedAt)
     `
 	return RunInTx(ctx, r.database, func(tx *sqlx.Tx) error {
 		queryMap := map[string]any{
 			"id":          storyEntity.Id[:],
+			"title":       storyEntity.Title,
 			"categoryId":  storyEntity.Category.Id[:],
 			"episode":     storyEntity.Episode,
 			"description": storyEntity.Description,

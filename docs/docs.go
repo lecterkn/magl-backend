@@ -264,7 +264,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "ストーリータイトル",
-                        "name": "name",
+                        "name": "title",
                         "in": "formData",
                         "required": true
                     },
@@ -443,6 +443,7 @@ const docTemplate = `{
                 "email",
                 "id",
                 "name",
+                "role",
                 "updatedAt"
             ],
             "properties": {
