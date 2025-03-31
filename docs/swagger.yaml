@@ -290,7 +290,7 @@ paths:
         type: string
       - description: ストーリータイトル
         in: formData
-        name: name
+        name: title
         required: true
         type: string
       - description: ストーリー区分

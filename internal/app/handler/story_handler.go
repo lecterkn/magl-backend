@@ -29,7 +29,7 @@ func NewStoryHandler(
 // @security		BearerAuth
 // @param			image		formData	file	false	"画像ファイル"
 // @param			categoryId	formData	string	true	"カテゴリID"
-// @param			name		formData	string	true	"ストーリータイトル"
+// @param			title		formData	string	true	"ストーリータイトル"
 // @param			episode		formData	string	true	"ストーリー区分"
 // @param			description	formData	string	true	"ストーリー概要"
 // @success		204
