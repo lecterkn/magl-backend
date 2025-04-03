@@ -110,6 +110,39 @@ const docTemplate = `{
                 }
             }
         },
+        "/mylists": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "マイリストにストーリーを追加",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mylist"
+                ],
+                "summary": "AddMyList",
+                "parameters": [
+                    {
+                        "description": "マイリスト追加リクエスト",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.MyListAddRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
         "/refresh": {
             "post": {
                 "description": "アクセストークンをリフレッシュする",
@@ -292,6 +325,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "request.MyListAddRequest": {
+            "type": "object",
+            "properties": {
+                "score": {
+                    "type": "integer"
+                },
+                "storyId": {
+                    "type": "string"
+                }
+            }
+        },
         "request.UserSigninRequest": {
             "type": "object",
             "required": [
