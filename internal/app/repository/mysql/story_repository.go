@@ -80,8 +80,8 @@ func (r *StoryRepositoryImpl) FindAll(ctx context.Context, keyword *string) ([]e
 
 func (r *StoryRepositoryImpl) FindById(ctx context.Context, id uuid.UUID) (*entity.StoryEntity, error) {
 	query := `
-        SELECT stories.id, stories.category_id, stories.title, stories.episode, stories.description, stories.image_url, stories.created_at, stories.updated_at
-            categories.name AS category_name, categories.description AS category_desc,  categories.image_url AS category_image_url
+        SELECT stories.id, stories.category_id, stories.title, stories.episode, stories.description, stories.image_url, stories.created_at, stories.updated_at,
+            categories.name AS category_name, categories.description AS category_desc,  categories.image_url AS category_image_url,
             categories.created_at category_created_at, categories.updated_at AS category_updated_at
         FROM stories
         JOIN categories

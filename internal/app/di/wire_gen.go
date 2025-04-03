@@ -10,6 +10,7 @@ import (
 	"github.com/google/wire"
 	"github.com/lecterkn/goat_backend/internal/app/database"
 	"github.com/lecterkn/goat_backend/internal/app/handler"
+	"github.com/lecterkn/goat_backend/internal/app/provider"
 	"github.com/lecterkn/goat_backend/internal/app/repository/mysql"
 	"github.com/lecterkn/goat_backend/internal/app/repository/redis"
 	"github.com/lecterkn/goat_backend/internal/app/usecase"
@@ -32,11 +33,16 @@ func InitializeHandlerSet() *HandlerSet {
 	storyHandler := handler.NewStoryHandler(storyUsecase)
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	userHandler := handler.NewUserHandler(userUsecase)
+	myListRepository := mysql.NewMyListRepositoryImpl(db)
+	transactionProvider := provider.NewTransactionProviderImpl(db)
+	myListUsecase := usecase.NewMyListUsecase(storyRepository, myListRepository, transactionProvider)
+	myListHandler := handler.NewMyListHandler(myListUsecase)
 	diHandlerSet := &HandlerSet{
 		AuthorizationHandler: authorizationHandler,
 		CategoryHandler:      categoryHandler,
 		StoryHandler:         storyHandler,
 		UserHandler:          userHandler,
+		MyListHandler:        myListHandler,
 	}
 	return diHandlerSet
 }
@@ -45,15 +51,18 @@ func InitializeHandlerSet() *HandlerSet {
 
 var databaseSet = wire.NewSet(database.GetMySQLConnection, database.GetRedisClient)
 
-var repositorySet = wire.NewSet(mysql.NewUserRepositoryImpl, mysql.NewCategoryRepositoryImpl, mysql.NewStoryRepositoryImpl, redis.NewTokenRepositoryImpl)
+var repositorySet = wire.NewSet(mysql.NewUserRepositoryImpl, mysql.NewCategoryRepositoryImpl, mysql.NewStoryRepositoryImpl, redis.NewTokenRepositoryImpl, mysql.NewMyListRepositoryImpl)
 
-var usecaseSet = wire.NewSet(usecase.NewAuthorizationUsecase, usecase.NewCategoryUsecase, usecase.NewStoryUsecase, usecase.NewUserUsecase)
+var providerSet = wire.NewSet(provider.NewTransactionProviderImpl)
 
-var handlerSet = wire.NewSet(handler.NewAuthorizationHandler, handler.NewCategoryHandler, handler.NewStoryHandler, handler.NewUserHandler)
+var usecaseSet = wire.NewSet(usecase.NewAuthorizationUsecase, usecase.NewCategoryUsecase, usecase.NewStoryUsecase, usecase.NewUserUsecase, usecase.NewMyListUsecase)
+
+var handlerSet = wire.NewSet(handler.NewAuthorizationHandler, handler.NewCategoryHandler, handler.NewStoryHandler, handler.NewUserHandler, handler.NewMyListHandler)
 
 type HandlerSet struct {
 	AuthorizationHandler *handler.AuthorizationHandler
 	CategoryHandler      *handler.CategoryHandler
 	StoryHandler         *handler.StoryHandler
 	UserHandler          *handler.UserHandler
+	MyListHandler        *handler.MyListHandler
 }

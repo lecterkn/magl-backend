@@ -1,5 +1,12 @@
 basePath: /api
 definitions:
+  request.MyListAddRequest:
+    properties:
+      score:
+        type: integer
+      storyId:
+        type: string
+    type: object
   request.UserSigninRequest:
     properties:
       password:
@@ -197,6 +204,26 @@ paths:
       summary: GetMe
       tags:
       - user
+  /mylists:
+    post:
+      description: マイリストにストーリーを追加
+      parameters:
+      - description: マイリスト追加リクエスト
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.MyListAddRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: AddMyList
+      tags:
+      - mylist
   /refresh:
     post:
       description: アクセストークンをリフレッシュする
