@@ -111,6 +111,29 @@ const docTemplate = `{
             }
         },
         "/mylists": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "マイリストを取得",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mylist"
+                ],
+                "summary": "GetMyList",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.MyListListResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -133,6 +156,37 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/request.MyListAddRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "マイリストのストーリーを更新",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mylist"
+                ],
+                "summary": "UpdateMyList",
+                "parameters": [
+                    {
+                        "description": "マイリスト更新リクエスト",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.MyListUpdateRequest"
                         }
                     }
                 ],
@@ -327,6 +381,25 @@ const docTemplate = `{
     "definitions": {
         "request.MyListAddRequest": {
             "type": "object",
+            "required": [
+                "score",
+                "storyId"
+            ],
+            "properties": {
+                "score": {
+                    "type": "integer"
+                },
+                "storyId": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.MyListUpdateRequest": {
+            "type": "object",
+            "required": [
+                "score",
+                "storyId"
+            ],
             "properties": {
                 "score": {
                     "type": "integer"
@@ -408,6 +481,59 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.MyListListResponse": {
+            "type": "object",
+            "required": [
+                "list"
+            ],
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.MyListResponse"
+                    }
+                }
+            }
+        },
+        "response.MyListResponse": {
+            "type": "object",
+            "required": [
+                "categoryId",
+                "categoryName",
+                "description",
+                "episode",
+                "id",
+                "imageUrl",
+                "score",
+                "title"
+            ],
+            "properties": {
+                "categoryId": {
+                    "type": "string"
+                },
+                "categoryName": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "episode": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "imageUrl": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer"
+                },
+                "title": {
                     "type": "string"
                 }
             }

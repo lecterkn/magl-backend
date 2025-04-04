@@ -61,5 +61,7 @@ func setRouting(app *echo.Echo) {
 	api.GET("/stories", handlerSet.StoryHandler.GetStories)
 
 	// MyList
+	auth.GET("/mylists", handlerSet.MyListHandler.GetMyList)
 	auth.POST("/mylists", handlerSet.MyListHandler.AddMyList)
+	auth.PATCH("/mylists", handlerSet.MyListHandler.UpdateMyList)
 }

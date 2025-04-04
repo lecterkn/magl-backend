@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 
 	"github.com/google/uuid"
 	"github.com/lecterkn/goat_backend/internal/app/port"
@@ -48,6 +49,31 @@ func (u *MyListUsecase) AddStoryToMyList(userId uuid.UUID, cmd input.MyListAddIn
 		}
 		// 保存
 		return u.mylistRepository.Save(ctx, mylistEntity)
+	})
+}
+
+// マイリストに登録済みストーリーのスコアを更新
+func (u *MyListUsecase) UpdateScore(userId uuid.UUID, cmd input.MyListUpdateInput) error {
+	// トランザクション開始
+	return u.txProvider.Transact(func(ctx context.Context) error {
+		// マイリスト取得
+		mylistEntity, err := u.mylistRepository.FindByUserId(ctx, userId)
+		if err != nil {
+			return err
+		}
+		for _, story := range mylistEntity.Stories {
+			// 対象ストーリー検索
+			if story.Story.Id == cmd.StoryId {
+				// スコア更新
+				err := story.UpdateScore(cmd.Score)
+				if err != nil {
+					return err
+				}
+				// マイリスト保存
+				return u.mylistRepository.Save(ctx, mylistEntity)
+			}
+		}
+		return errors.New("the story is not in mylist")
 	})
 }
 
