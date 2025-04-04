@@ -9,13 +9,13 @@ import (
 
 type MyListEntity struct {
 	UserId  uuid.UUID
-	Stories []ScoredStoryEntity
+	Stories []*ScoredStoryEntity
 }
 
 func NewMyListEntity(userId uuid.UUID) *MyListEntity {
 	return &MyListEntity{
 		UserId:  userId,
-		Stories: []ScoredStoryEntity{},
+		Stories: []*ScoredStoryEntity{},
 	}
 }
 
@@ -33,7 +33,7 @@ func (e *MyListEntity) Add(storyEntity *StoryEntity, score int) error {
 		return err
 	}
 	// 追加
-	e.Stories = append(e.Stories, *scoredStoryEntity)
+	e.Stories = append(e.Stories, scoredStoryEntity)
 	return nil
 }
 
@@ -47,9 +47,23 @@ func NewScoredStoryEntity(story StoryEntity, score int) (*ScoredStoryEntity, err
 		Story: story,
 		Score: score,
 	}
-	validate := validator.New(validator.WithRequiredStructEnabled())
-	if err := validate.Struct(scoredStoryEntity); err != nil {
+	if err := scoredStoryEntity.isValid(); err != nil {
 		return nil, err
 	}
 	return &scoredStoryEntity, nil
+}
+
+func (e *ScoredStoryEntity) UpdateScore(score int) error {
+	oldScore := e.Score
+	e.Score = score
+	err := e.isValid()
+	if err != nil {
+		e.Score = oldScore
+	}
+	return err
+}
+
+func (e *ScoredStoryEntity) isValid() error {
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	return validate.Struct(e)
 }

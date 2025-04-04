@@ -6,3 +6,8 @@ type MyListAddInput struct {
 	StoryId uuid.UUID
 	Score   int
 }
+
+type MyListUpdateInput struct {
+	StoryId uuid.UUID
+	Score   int
+}

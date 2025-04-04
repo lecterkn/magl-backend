@@ -81,7 +81,7 @@ func (r *MyListRepositoryImpl) FindByUserId(ctx context.Context, userId uuid.UUI
 }
 
 func (r *MyListRepositoryImpl) toEntity(userId uuid.UUID, mylistModels []model.MyListModel) (*entity.MyListEntity, error) {
-	scoredStories := []entity.ScoredStoryEntity{}
+	scoredStories := []*entity.ScoredStoryEntity{}
 	for _, mylistModel := range mylistModels {
 		storyId, err := uuid.FromBytes(mylistModel.StoryId)
 		if err != nil {
@@ -99,7 +99,7 @@ func (r *MyListRepositoryImpl) toEntity(userId uuid.UUID, mylistModels []model.M
 		if mylistModel.CategoryImageUrl.Valid {
 			categoryImageUrl = &mylistModel.CategoryImageUrl.String
 		}
-		scoredStories = append(scoredStories, entity.ScoredStoryEntity{
+		scoredStories = append(scoredStories, &entity.ScoredStoryEntity{
 			Score: mylistModel.Score,
 			Story: entity.StoryEntity{
 				Id: storyId,
