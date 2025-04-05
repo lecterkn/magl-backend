@@ -35,6 +35,9 @@ func (r *MyListRepositoryImpl) Save(ctx context.Context, mylistEntity *entity.My
 		if err != nil {
 			return err
 		}
+		if len(mylistEntity.Stories) == 0 {
+			return nil
+		}
 		// 全て挿入
 		query = `
             INSERT INTO mylists(user_id, story_id, score)

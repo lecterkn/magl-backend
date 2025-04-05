@@ -197,6 +197,37 @@ const docTemplate = `{
                 }
             }
         },
+        "/mylists/{storyId}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "マイリストからストーリーを削除",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mylist"
+                ],
+                "summary": "RemoveFromMyList",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ストーリーID",
+                        "name": "storyId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
         "/refresh": {
             "post": {
                 "description": "アクセストークンをリフレッシュする",

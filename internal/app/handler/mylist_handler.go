@@ -21,14 +21,14 @@ func NewMyListHandler(mylistUsecase *usecase.MyListUsecase) *MyListHandler {
 	}
 }
 
-// @summary		AddMyList
-// @description	マイリストにストーリーを追加
-// @tags			mylist
-// @produce		json
-// @security		BearerAuth
-// @param			request	body	request.MyListAddRequest	true	"マイリスト追加リクエスト"
-// @success		204
-// @router			/mylists [post]
+//	@summary		AddMyList
+//	@description	マイリストにストーリーを追加
+//	@tags			mylist
+//	@produce		json
+//	@security		BearerAuth
+//	@param			request	body	request.MyListAddRequest	true	"マイリスト追加リクエスト"
+//	@success		204
+//	@router			/mylists [post]
 func (h *MyListHandler) AddMyList(ctx echo.Context) error {
 	userId, err := uuid.Parse(ctx.Get("userId").(string))
 	if err != nil {
@@ -54,14 +54,14 @@ func (h *MyListHandler) AddMyList(ctx echo.Context) error {
 	return ctx.NoContent(http.StatusNoContent)
 }
 
-// @summary		UpdateMyList
-// @description	マイリストのストーリーを更新
-// @tags			mylist
-// @produce		json
-// @security		BearerAuth
-// @param			request	body	request.MyListUpdateRequest	true	"マイリスト更新リクエスト"
-// @success		204
-// @router			/mylists [patch]
+//	@summary		UpdateMyList
+//	@description	マイリストのストーリーを更新
+//	@tags			mylist
+//	@produce		json
+//	@security		BearerAuth
+//	@param			request	body	request.MyListUpdateRequest	true	"マイリスト更新リクエスト"
+//	@success		204
+//	@router			/mylists [patch]
 func (h *MyListHandler) UpdateMyList(ctx echo.Context) error {
 	userId, err := uuid.Parse(ctx.Get("userId").(string))
 	if err != nil {
@@ -85,13 +85,13 @@ func (h *MyListHandler) UpdateMyList(ctx echo.Context) error {
 	return ctx.NoContent(http.StatusNoContent)
 }
 
-// @summary		GetMyList
-// @description	マイリストを取得
-// @tags			mylist
-// @produce		json
-// @security		BearerAuth
-// @success		200 {object} response.MyListListResponse
-// @router			/mylists [get]
+//	@summary		GetMyList
+//	@description	マイリストを取得
+//	@tags			mylist
+//	@produce		json
+//	@security		BearerAuth
+//	@success		200	{object}	response.MyListListResponse
+//	@router			/mylists [get]
 func (h *MyListHandler) GetMyList(ctx echo.Context) error {
 	userId, err := uuid.Parse(ctx.Get("userId").(string))
 	if err != nil {
@@ -119,4 +119,32 @@ func (h *MyListHandler) GetMyList(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, response.MyListListResponse{
 		List: list,
 	})
+}
+
+//	@summary		RemoveFromMyList
+//	@description	マイリストからストーリーを削除
+//	@tags			mylist
+//	@produce		json
+//	@security		BearerAuth
+//	@param			storyId	path	string	true	"ストーリーID"
+//	@success		204
+//	@router			/mylists/{storyId} [delete]
+func (h *MyListHandler) RemoveFromMyList(ctx echo.Context) error {
+	userId, err := uuid.Parse(ctx.Get("userId").(string))
+	if err != nil {
+		return err
+	}
+	storyId, err := uuid.Parse(ctx.Param("storyId"))
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, response.ErrorResponse{
+			Message: "invalid storyId",
+		})
+	}
+	err = h.mylistUsecase.RemoveFromList(userId, storyId)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, response.ErrorResponse{
+			Message: err.Error(),
+		})
+	}
+	return ctx.NoContent(http.StatusNoContent)
 }
