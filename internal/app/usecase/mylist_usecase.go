@@ -101,3 +101,22 @@ func (u *MyListUsecase) GetMylist(userId uuid.UUID) (*output.MyListOutput, error
 		Stories: outputList,
 	}, nil
 }
+
+// マイリストからストーリーを削除
+func (u *MyListUsecase) RemoveFromList(userId uuid.UUID, storyId uuid.UUID) error {
+	// トランザクション開始
+	return u.txProvider.Transact(func(ctx context.Context) error {
+		// マイリスト取得
+		mylistEntity, err := u.mylistRepository.FindByUserId(ctx, userId)
+		if err != nil {
+			return err
+		}
+		// ストーリーを削除
+		err = mylistEntity.Remove(storyId)
+		if err != nil {
+			return err
+		}
+		// 保存
+		return u.mylistRepository.Save(ctx, mylistEntity)
+	})
+}

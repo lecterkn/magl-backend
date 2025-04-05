@@ -307,6 +307,25 @@ paths:
       summary: AddMyList
       tags:
       - mylist
+  /mylists/{storyId}:
+    delete:
+      description: マイリストからストーリーを削除
+      parameters:
+      - description: ストーリーID
+        in: path
+        name: storyId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - BearerAuth: []
+      summary: RemoveFromMyList
+      tags:
+      - mylist
   /refresh:
     post:
       description: アクセストークンをリフレッシュする

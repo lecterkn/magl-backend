@@ -64,4 +64,5 @@ func setRouting(app *echo.Echo) {
 	auth.GET("/mylists", handlerSet.MyListHandler.GetMyList)
 	auth.POST("/mylists", handlerSet.MyListHandler.AddMyList)
 	auth.PATCH("/mylists", handlerSet.MyListHandler.UpdateMyList)
+	auth.DELETE("/mylists/:storyId", handlerSet.MyListHandler.RemoveFromMyList)
 }

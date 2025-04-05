@@ -23,7 +23,7 @@ func NewMyListEntity(userId uuid.UUID) *MyListEntity {
 func (e *MyListEntity) Add(storyEntity *StoryEntity, score int) error {
 	// 重複確認
 	for _, mylistItem := range e.Stories {
-		if mylistItem.Story.Id == storyEntity.Id {
+		if mylistItem.Story.Id.String() == storyEntity.Id.String() {
 			return errors.New("the story is already added")
 		}
 	}
@@ -35,6 +35,17 @@ func (e *MyListEntity) Add(storyEntity *StoryEntity, score int) error {
 	// 追加
 	e.Stories = append(e.Stories, scoredStoryEntity)
 	return nil
+}
+
+// マイリストからストーリーを削除
+func (e *MyListEntity) Remove(storyId uuid.UUID) error {
+	for i, mylistItem := range e.Stories {
+		if mylistItem.Story.Id == storyId {
+			e.Stories = append(e.Stories[:i], e.Stories[i+1:]...)
+			return nil
+		}
+	}
+	return errors.New("the story is not in the list")
 }
 
 type ScoredStoryEntity struct {
