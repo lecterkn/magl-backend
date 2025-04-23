@@ -1,0 +1,23 @@
+name: Build and Deploy Images
+on:
+  workflow_dispatch
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # リポジトリにチェックアウト
+      - name: checkout
+        uses: actions/checkout@v4
+      # イメージをビルド
+      - name: build docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}:latest .
+      # Dockerにログイン
+      - name: login ghcr.io
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      # イメージをデプロイ
+      - name: deploy image
+        run: |
+          docker push ghcr.io/${{  github.repository }}:latest
+
