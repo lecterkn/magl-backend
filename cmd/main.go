@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -36,10 +37,17 @@ func main() {
 
 // ルーティングの設定
 func setRouting(app *echo.Echo) {
+	// ヘルスチェック用エンドポイント
+	app.GET("/healthz", func(ctx echo.Context) error {
+		return ctx.NoContent(http.StatusOK)
+	})
+	// Swagger用エンドポイント
 	app.GET("/swagger/*", echoSwagger.WrapHandler)
 
+	// ハンドラセット
 	handlerSet := di.InitializeHandlerSet()
 
+	// グループ
 	api := app.Group("api")
 	auth := api.Group("")
 	auth.Use(handlerSet.AuthorizationHandler.Authorization)

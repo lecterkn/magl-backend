@@ -2,3 +2,7 @@ development:
   dialect: mysql
   dir: migrations
   datasource: "animegame:mysecretpassword@tcp(127.0.0.1:3326)/myaglist?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=true"
+production:
+  dialect: mysql
+  dir: migrations
+  datasource: "${MY_ANIMEGAME_LIST_MYSQL_USER}:${MY_ANIMEGAME_LIST_MYSQL_PASSWORD}@tcp(127.0.0.1:3326)/${MY_ANIMEGAME_LIST_MYSQL_DATABASE}?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=true"
