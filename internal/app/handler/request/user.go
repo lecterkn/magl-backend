@@ -10,3 +10,7 @@ type UserSignupRequest struct {
 	Email    string `json:"email" validate:"required"`
 	Password string `json:"password" validate:"required"`
 }
+
+type UserUpdatePermissionRequest struct {
+	Permission int `json:"permission" validate:"required"`
+}

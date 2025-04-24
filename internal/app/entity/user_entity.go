@@ -12,7 +12,7 @@ type UserEntity struct {
 	Id        uuid.UUID
 	Name      string `validate:"required,min=4,max=32"`
 	Email     string `validate:"required,email"`
-	Role      RoleEntity
+	Role      *RoleEntity
 	Password  []byte
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -36,7 +36,7 @@ func NewUserEntity(name, email, password string, role int) (*UserEntity, error) 
 		Name:      name,
 		Email:     email,
 		Password:  hashPass,
-		Role:      *roleEntity,
+		Role:      roleEntity,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
@@ -45,4 +45,9 @@ func NewUserEntity(name, email, password string, role int) (*UserEntity, error) 
 		return nil, err
 	}
 	return &userEntity, nil
+}
+
+func (e *UserEntity) UpdateRole(role *RoleEntity) {
+	e.Role = role
+	e.UpdatedAt = time.Now()
 }
