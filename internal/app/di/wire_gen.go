@@ -31,10 +31,10 @@ func InitializeHandlerSet() *HandlerSet {
 	storyRepository := mysql.NewStoryRepositoryImpl(db)
 	storyUsecase := usecase.NewStoryUsecase(userRepository, storyRepository, categoryRepository)
 	storyHandler := handler.NewStoryHandler(storyUsecase)
-	userUsecase := usecase.NewUserUsecase(userRepository)
+	transactionProvider := provider.NewTransactionProviderImpl(db)
+	userUsecase := usecase.NewUserUsecase(userRepository, transactionProvider)
 	userHandler := handler.NewUserHandler(userUsecase)
 	myListRepository := mysql.NewMyListRepositoryImpl(db)
-	transactionProvider := provider.NewTransactionProviderImpl(db)
 	myListUsecase := usecase.NewMyListUsecase(storyRepository, myListRepository, transactionProvider)
 	myListHandler := handler.NewMyListHandler(myListUsecase)
 	diHandlerSet := &HandlerSet{

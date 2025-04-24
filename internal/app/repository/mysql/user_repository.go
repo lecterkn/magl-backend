@@ -71,6 +71,34 @@ func (r *UserRepositoryImpl) FindById(ctx context.Context, id uuid.UUID) (*entit
 	return r.toEntity(&userModel)
 }
 
+func (r *UserRepositoryImpl) FindAll(ctx context.Context) ([]entity.UserEntity, error) {
+	query := `
+        SELECT id, name, email, password, role, created_at, updated_at
+        FROM users
+    `
+	userModels := []model.UserModel{}
+	err := RunInTx(ctx, r.database, func(tx *sqlx.Tx) error {
+		return tx.Select(&userModels, query)
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return r.toEntities(userModels)
+}
+
+func (r *UserRepositoryImpl) toEntities(userModels []model.UserModel) ([]entity.UserEntity, error) {
+	userEntities := []entity.UserEntity{}
+	for _, userModel := range userModels {
+		userEntity, err := r.toEntity(&userModel)
+		if err != nil {
+			return nil, err
+		}
+		userEntities = append(userEntities, *userEntity)
+	}
+	return userEntities, nil
+}
+
 func (r *UserRepositoryImpl) toEntity(userModel *model.UserModel) (*entity.UserEntity, error) {
 	id, err := uuid.FromBytes(userModel.Id)
 	if err != nil {

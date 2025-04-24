@@ -41,3 +41,30 @@ func (h *UserHandler) GetMe(ctx echo.Context) error {
 	}
 	return ctx.JSON(http.StatusOK, response.UserResponse(*userOutput))
 }
+
+// @summary		GetUsers
+// @description	ユーザーを一覧取得する
+// @tags			user
+// @produce		json
+// @security		BearerAuth
+// @success		200	{object}	response.UserListResponse
+// @router			/users [get]
+func (h *UserHandler) GetUsers(ctx echo.Context) error {
+	userId, err := uuid.Parse(ctx.Get("userId").(string))
+	if err != nil {
+		return err
+	}
+	listOutput, err := h.userUsecase.GetUsers(userId)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, response.ErrorResponse{
+			Message: err.Error(),
+		})
+	}
+	list := []response.UserResponse{}
+	for _, outputItem := range listOutput {
+		list = append(list, response.UserResponse(outputItem))
+	}
+	return ctx.JSON(http.StatusOK, response.UserListResponse{
+		List: list,
+	})
+}

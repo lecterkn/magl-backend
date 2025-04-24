@@ -59,6 +59,7 @@ func setRouting(app *echo.Echo) {
 
 	// User
 	auth.GET("/me", handlerSet.UserHandler.GetMe)
+	auth.GET("/users", handlerSet.UserHandler.GetUsers)
 
 	// Category
 	auth.POST("/categories", handlerSet.CategoryHandler.Create)
