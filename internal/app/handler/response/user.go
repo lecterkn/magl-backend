@@ -15,6 +15,10 @@ type UserResponse struct {
 	UpdatedAt time.Time `json:"updatedAt" validate:"required"`
 }
 
+type UserListResponse struct {
+	List []UserResponse `json:"list" validate:"required"`
+}
+
 type UserSigninResponse struct {
 	AccessToken  string `json:"accessToken" validate:"required"`
 	RefreshToken string `json:"refreshToken" validate:"required"`
