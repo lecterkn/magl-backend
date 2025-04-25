@@ -36,7 +36,8 @@ func (u *UserUsecase) GetUser(id uuid.UUID) (*output.UserOutput, error) {
 		Id:        userEntity.Id,
 		Name:      userEntity.Name,
 		Email:     userEntity.Email,
-		Role:      userEntity.Role.GetPermission(),
+		Role:      uint8(userEntity.Role.Permission),
+		RoleName:  userEntity.Role.GetPermission(),
 		CreatedAt: userEntity.CreatedAt,
 		UpdatedAt: userEntity.UpdatedAt,
 	}, nil
@@ -69,7 +70,8 @@ func (u *UserUsecase) GetUsers(queryUserId uuid.UUID) ([]output.UserOutput, erro
 			Id:        userEntity.Id,
 			Name:      userEntity.Name,
 			Email:     userEntity.Email,
-			Role:      userEntity.Role.GetPermission(),
+			Role:      uint8(userEntity.Role.Permission),
+			RoleName:  userEntity.Role.GetPermission(),
 			CreatedAt: userEntity.CreatedAt,
 			UpdatedAt: userEntity.UpdatedAt,
 		})
@@ -90,6 +92,9 @@ func (u *UserUsecase) EditUserPermission(queryUserId, targetUserId uuid.UUID, cm
 		}
 		// 新しい権限
 		newRole, err := entity.NewRoleEntity(cmd.Role)
+		if err != nil {
+			return err
+		}
 		// 権限確認
 		err = canUpdatePermission(queryUserEntity, targetUserEntity, newRole)
 		if err != nil {

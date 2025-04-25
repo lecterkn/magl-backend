@@ -7,7 +7,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-type Permission int
+type Permission uint8
 
 const (
 	General       Permission = iota // 0
