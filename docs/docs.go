@@ -407,6 +407,74 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/users": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "ユーザーを一覧取得する",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "GetUsers",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.UserListResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{userId}/permissions": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "ユーザーを一覧取得する",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "EditPermission",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "編集対象ユーザーID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ユーザーログインリクエスト",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UserUpdatePermissionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.UserListResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -471,6 +539,17 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "request.UserUpdatePermissionRequest": {
+            "type": "object",
+            "required": [
+                "permission"
+            ],
+            "properties": {
+                "permission": {
+                    "type": "integer"
                 }
             }
         },
@@ -637,6 +716,20 @@ const docTemplate = `{
                 }
             }
         },
+        "response.UserListResponse": {
+            "type": "object",
+            "required": [
+                "list"
+            ],
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.UserResponse"
+                    }
+                }
+            }
+        },
         "response.UserResponse": {
             "type": "object",
             "required": [
@@ -645,6 +738,7 @@ const docTemplate = `{
                 "id",
                 "name",
                 "role",
+                "roleName",
                 "updatedAt"
             ],
             "properties": {
@@ -661,6 +755,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "role": {
+                    "type": "integer"
+                },
+                "roleName": {
                     "type": "string"
                 },
                 "updatedAt": {

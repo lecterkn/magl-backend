@@ -39,6 +39,25 @@ func (r *UserRepositoryImpl) Create(ctx context.Context, userEntity *entity.User
 	})
 }
 
+func (r *UserRepositoryImpl) Update(ctx context.Context, userEntity *entity.UserEntity) error {
+	query := `
+		UPDATE users
+		SET name = :name, email = :email, password = :password, role = :role, updated_at = :updatedAt
+		WHERE id = :id
+    `
+	return RunInTx(ctx, r.database, func(tx *sqlx.Tx) error {
+		_, err := tx.NamedExec(query, map[string]any{
+			"id":        userEntity.Id[:],
+			"name":      userEntity.Name,
+			"email":     userEntity.Email,
+			"role":      userEntity.Role.Permission,
+			"password":  userEntity.Password,
+			"updatedAt": userEntity.UpdatedAt,
+		})
+		return err
+	})
+}
+
 func (r *UserRepositoryImpl) FindByName(ctx context.Context, name string) (*entity.UserEntity, error) {
 	query := `
         SELECT id, name, email, password, role, created_at, updated_at
@@ -109,7 +128,7 @@ func (r *UserRepositoryImpl) toEntity(userModel *model.UserModel) (*entity.UserE
 		Name:     userModel.Name,
 		Email:    userModel.Email,
 		Password: userModel.Password,
-		Role: entity.RoleEntity{
+		Role: &entity.RoleEntity{
 			Permission: entity.Permission(userModel.Role),
 		},
 		CreatedAt: userModel.CreatedAt,

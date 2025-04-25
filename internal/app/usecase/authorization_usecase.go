@@ -43,7 +43,8 @@ func (u *AuthorizationUsecase) CreateUser(cmd input.UserCreateInput) (*output.Us
 		Id:        userEntity.Id,
 		Name:      userEntity.Name,
 		Email:     userEntity.Email,
-		Role:      userEntity.Role.GetPermission(),
+		Role:      uint8(userEntity.Role.Permission),
+		RoleName:  userEntity.Role.GetPermission(),
 		CreatedAt: userEntity.CreatedAt,
 		UpdatedAt: userEntity.UpdatedAt,
 	}, nil

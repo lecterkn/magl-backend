@@ -43,6 +43,13 @@ definitions:
     - password
     - username
     type: object
+  request.UserUpdatePermissionRequest:
+    properties:
+      permission:
+        type: integer
+    required:
+    - permission
+    type: object
   response.CategoryListResponse:
     properties:
       list:
@@ -155,6 +162,15 @@ definitions:
     - title
     - updatedAt
     type: object
+  response.UserListResponse:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.UserResponse'
+        type: array
+    required:
+    - list
+    type: object
   response.UserResponse:
     properties:
       createdAt:
@@ -166,6 +182,8 @@ definitions:
       name:
         type: string
       role:
+        type: integer
+      roleName:
         type: string
       updatedAt:
         type: string
@@ -175,6 +193,7 @@ definitions:
     - id
     - name
     - role
+    - roleName
     - updatedAt
     type: object
   response.UserSigninResponse:
@@ -442,6 +461,48 @@ paths:
       summary: CreateStory
       tags:
       - story
+  /users:
+    get:
+      description: ユーザーを一覧取得する
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UserListResponse'
+      security:
+      - BearerAuth: []
+      summary: GetUsers
+      tags:
+      - user
+  /users/{userId}/permissions:
+    patch:
+      description: ユーザーを一覧取得する
+      parameters:
+      - description: 編集対象ユーザーID
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: ユーザーログインリクエスト
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.UserUpdatePermissionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UserListResponse'
+      security:
+      - BearerAuth: []
+      summary: EditPermission
+      tags:
+      - user
 securityDefinitions:
   BearerAuth:
     in: header

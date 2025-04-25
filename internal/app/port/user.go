@@ -9,6 +9,7 @@ import (
 
 type UserRepository interface {
 	Create(context.Context, *entity.UserEntity) error
+	Update(context.Context, *entity.UserEntity) error
 	FindById(context.Context, uuid.UUID) (*entity.UserEntity, error)
 	FindByName(context.Context, string) (*entity.UserEntity, error)
 	FindAll(context.Context) ([]entity.UserEntity, error)
