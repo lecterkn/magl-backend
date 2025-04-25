@@ -10,7 +10,7 @@ VALUES (
     'magl-rootuser@example.com',
     'magl-root',
     '$2a$12$KV36qS63rXzXLsczOTWzB.6lT8Er8WtoXGA6e/F.L6uvYt.1.L5oO',
-    2
+    3
 );
 
 -- +migrate Down

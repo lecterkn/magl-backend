@@ -62,5 +62,5 @@ func (u *CategoryUsecase) GetCategories(cmd input.CategoryQueryInput) ([]output.
 }
 
 func (u *CategoryUsecase) canCreateCategory(userEntity *entity.UserEntity) bool {
-	return userEntity.Role.IsAdministrator() || userEntity.Role.IsRoot()
+	return userEntity.Role.IsModerator() || userEntity.Role.IsAdministrator() || userEntity.Role.IsRoot()
 }

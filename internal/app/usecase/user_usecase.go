@@ -108,7 +108,7 @@ func (u *UserUsecase) EditUserPermission(queryUserId, targetUserId uuid.UUID, cm
 
 // ユーザー一覧取得ができるかの権限確認
 func canQueryUsers(userEntity *entity.UserEntity) error {
-	if userEntity.Role.IsAdministrator() || userEntity.Role.IsRoot() {
+	if userEntity.Role.IsModerator() || userEntity.Role.IsAdministrator() || userEntity.Role.IsRoot() {
 		return nil
 	}
 	return errors.New("invalid permission")

@@ -76,7 +76,8 @@ func (h *UserHandler) GetUsers(ctx echo.Context) error {
 //	@tags			user
 //	@produce		json
 //	@security		BearerAuth
-//	@param			userId	path		string	true	"編集対象ユーザーID"
+//	@param			userId	path		string								true	"編集対象ユーザーID"
+//	@param			request	body		request.UserUpdatePermissionRequest	true	"ユーザーログインリクエスト"
 //	@success		200		{object}	response.UserListResponse
 //	@router			/users/{userId}/permissions [patch]
 func (h *UserHandler) EditPermission(ctx echo.Context) error {

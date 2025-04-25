@@ -11,8 +11,9 @@ type Permission uint8
 
 const (
 	General       Permission = iota // 0
-	Administrator                   // 1
-	Root                            // 2
+	Moderator                       // 1
+	Administrator                   // 2
+	Root                            // 3
 )
 
 type RoleEntity struct {
@@ -37,10 +38,12 @@ func NewRoleEntity(permission int) (*RoleEntity, error) {
 
 func (e *RoleEntity) GetPermission() string {
 	switch e.Permission {
-	case Root:
-		return "Root"
+	case Moderator:
+		return "Moderator"
 	case Administrator:
 		return "Administrator"
+	case Root:
+		return "Root"
 	default:
 		return "General"
 	}
@@ -54,6 +57,10 @@ func (e *RoleEntity) IsAdministrator() bool {
 	return e.Permission == Administrator
 }
 
+func (e *RoleEntity) IsModerator() bool {
+	return e.Permission == Moderator
+}
+
 func (e *RoleEntity) IsRoot() bool {
 	return e.Permission == Root
 }
@@ -62,6 +69,8 @@ func toPermission(permission int) (Permission, error) {
 	switch permission {
 	case int(General):
 		return General, nil
+	case int(Moderator):
+		return Moderator, nil
 	case int(Administrator):
 		return Administrator, nil
 	case int(Root):

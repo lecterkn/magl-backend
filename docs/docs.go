@@ -455,6 +455,15 @@ const docTemplate = `{
                         "name": "userId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "ユーザーログインリクエスト",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UserUpdatePermissionRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -530,6 +539,17 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "request.UserUpdatePermissionRequest": {
+            "type": "object",
+            "required": [
+                "permission"
+            ],
+            "properties": {
+                "permission": {
+                    "type": "integer"
                 }
             }
         },
@@ -718,6 +738,7 @@ const docTemplate = `{
                 "id",
                 "name",
                 "role",
+                "roleName",
                 "updatedAt"
             ],
             "properties": {
@@ -734,6 +755,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "role": {
+                    "type": "integer"
+                },
+                "roleName": {
                     "type": "string"
                 },
                 "updatedAt": {

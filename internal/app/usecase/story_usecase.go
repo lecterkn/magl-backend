@@ -77,5 +77,5 @@ func (u *StoryUsecase) GetStories(cmd input.StoryQueryInput) ([]output.StoryOutp
 }
 
 func (u *StoryUsecase) canCreateStory(userEntity *entity.UserEntity) bool {
-	return userEntity.Role.IsAdministrator() || userEntity.Role.IsRoot()
+	return userEntity.Role.IsModerator() || userEntity.Role.IsAdministrator() || userEntity.Role.IsRoot()
 }
