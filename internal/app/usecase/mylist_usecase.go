@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	"github.com/lecterkn/goat_backend/internal/app/entity"
 	"github.com/lecterkn/goat_backend/internal/app/port"
 	"github.com/lecterkn/goat_backend/internal/app/usecase/input"
 	"github.com/lecterkn/goat_backend/internal/app/usecase/output"
@@ -85,6 +86,10 @@ func (u *MyListUsecase) GetMylist(userId uuid.UUID) (*output.MyListOutput, error
 	}
 	outputList := []output.MyListItemOutput{}
 	for _, scoredStoryEntity := range mylistEntity.Stories {
+		imageUrl := &scoredStoryEntity.Story.ImageUrl.Url
+		if scoredStoryEntity.Story.ImageUrl.Availability == entity.Unavailable {
+			imageUrl = nil
+		}
 		outputList = append(outputList, output.MyListItemOutput{
 			StoryId:      scoredStoryEntity.Story.Id,
 			CategoryId:   scoredStoryEntity.Story.Category.Id,
@@ -92,7 +97,7 @@ func (u *MyListUsecase) GetMylist(userId uuid.UUID) (*output.MyListOutput, error
 			Title:        scoredStoryEntity.Story.Title,
 			Episode:      scoredStoryEntity.Story.Episode,
 			Description:  scoredStoryEntity.Story.Description,
-			ImageUrl:     scoredStoryEntity.Story.ImageUrl,
+			ImageUrl:     imageUrl,
 			Score:        scoredStoryEntity.Score,
 		})
 	}

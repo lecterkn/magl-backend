@@ -42,7 +42,7 @@ func (u *StoryUsecase) CreateStory(userId uuid.UUID, cmd input.StoryCreateInput)
 	if err != nil {
 		return err
 	}
-	var imageUrl *string = nil
+	imageUrl := entity.NewImageUrl("", entity.Unavailable)
 	// TODO: 画像ファイルをアップロード
 	if cmd.ImageFile != nil {
 	}
@@ -61,6 +61,10 @@ func (u *StoryUsecase) GetStories(cmd input.StoryQueryInput) ([]output.StoryOutp
 	}
 	listOutput := []output.StoryOutput{}
 	for _, storyEntity := range storyEntities {
+		imageUrl := &storyEntity.ImageUrl.Url
+		if storyEntity.ImageUrl.Availability == entity.Unavailable {
+			imageUrl = nil
+		}
 		listOutput = append(listOutput, output.StoryOutput{
 			Id:           storyEntity.Id,
 			CategoryId:   storyEntity.Category.Id,
@@ -68,7 +72,7 @@ func (u *StoryUsecase) GetStories(cmd input.StoryQueryInput) ([]output.StoryOutp
 			Title:        storyEntity.Title,
 			Episode:      storyEntity.Episode,
 			Description:  storyEntity.Description,
-			ImageUrl:     storyEntity.ImageUrl,
+			ImageUrl:     imageUrl,
 			CreatedAt:    storyEntity.CreatedAt,
 			UpdatedAt:    storyEntity.UpdatedAt,
 		})

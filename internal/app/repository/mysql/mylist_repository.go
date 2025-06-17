@@ -90,17 +90,9 @@ func (r *MyListRepositoryImpl) toEntity(userId uuid.UUID, mylistModels []model.M
 		if err != nil {
 			return nil, err
 		}
-		var storyImageUrl *string = nil
-		if mylistModel.StoryImageUrl.Valid {
-			storyImageUrl = &mylistModel.StoryImageUrl.String
-		}
 		categoryId, err := uuid.FromBytes(mylistModel.CategoryId)
 		if err != nil {
 			return nil, err
-		}
-		var categoryImageUrl *string = nil
-		if mylistModel.CategoryImageUrl.Valid {
-			categoryImageUrl = &mylistModel.CategoryImageUrl.String
 		}
 		scoredStories = append(scoredStories, &entity.ScoredStoryEntity{
 			Score: mylistModel.Score,
@@ -110,16 +102,22 @@ func (r *MyListRepositoryImpl) toEntity(userId uuid.UUID, mylistModels []model.M
 					Id:          categoryId,
 					Name:        mylistModel.CategoryName,
 					Description: mylistModel.CategoryDescription,
-					ImageUrl:    categoryImageUrl,
-					CreatedAt:   mylistModel.CategoryCreatedAt,
-					UpdatedAt:   mylistModel.CategoryUpdatedAt,
+					ImageUrl: &entity.ImageUrlEntity{
+						Url:          mylistModel.CategoryImageUrl.String,
+						Availability: entity.Availability(mylistModel.CategoryImageUrl.Valid),
+					},
+					CreatedAt: mylistModel.CategoryCreatedAt,
+					UpdatedAt: mylistModel.CategoryUpdatedAt,
 				},
 				Title:       mylistModel.StoryTitle,
 				Episode:     mylistModel.StoryEpisode,
 				Description: mylistModel.StoryDescription,
-				ImageUrl:    storyImageUrl,
-				CreatedAt:   mylistModel.StoryCreatedAt,
-				UpdatedAt:   mylistModel.StoryUpdatedAt,
+				ImageUrl: &entity.ImageUrlEntity{
+					Url:          mylistModel.CategoryImageUrl.String,
+					Availability: entity.Availability(mylistModel.CategoryImageUrl.Valid),
+				},
+				CreatedAt: mylistModel.StoryCreatedAt,
+				UpdatedAt: mylistModel.StoryUpdatedAt,
 			},
 		})
 	}

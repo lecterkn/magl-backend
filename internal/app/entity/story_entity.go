@@ -13,12 +13,12 @@ type StoryEntity struct {
 	Title       string `validate:"required,min=3,max=64"`
 	Episode     string `validate:"required,min=1,max=64"`
 	Description string `validate:"min=0,max=1024"`
-	ImageUrl    *string
+	ImageUrl    *ImageUrlEntity
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
 
-func NewStoryEntity(categoryEntity CategoryEntity, title, episode, description string, imageUrl *string) (*StoryEntity, error) {
+func NewStoryEntity(categoryEntity CategoryEntity, title, episode, description string, imageUrl *ImageUrlEntity) (*StoryEntity, error) {
 	id, err := uuid.NewV7()
 	if err != nil {
 		return nil, err

@@ -11,12 +11,12 @@ type CategoryEntity struct {
 	Id          uuid.UUID
 	Name        string `validate:"required,min=2,max=32"`
 	Description string `validate:"required,min=0,max=1023"`
-	ImageUrl    *string
+	ImageUrl    *ImageUrlEntity
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
 
-func NewCategoryEntity(name, description string, imageUrl *string) (*CategoryEntity, error) {
+func NewCategoryEntity(name, description string, imageUrl *ImageUrlEntity) (*CategoryEntity, error) {
 	id, err := uuid.NewV7()
 	if err != nil {
 		return nil, err
