@@ -35,7 +35,7 @@ func (u *CategoryUsecase) CreateCategory(userId uuid.UUID, cmd input.CategoryCre
 	if !u.canCreateCategory(userEntity) {
 		return errors.New("permission error")
 	}
-	var imageUrl *string = nil
+	imageUrl := entity.NewImageUrl("", entity.Unavailable)
 	// TODO: ファイルアップロード
 	if cmd.ImageFile != nil {
 	}
@@ -56,7 +56,7 @@ func (u *CategoryUsecase) GetCategories(cmd input.CategoryQueryInput) ([]output.
 	}
 	outputList := []output.CategoryQueryOutput{}
 	for _, categoryEntity := range categorieEntities {
-		outputList = append(outputList, output.CategoryQueryOutput(categoryEntity))
+		outputList = append(outputList, output.ToOutput(categoryEntity))
 	}
 	return outputList, nil
 }

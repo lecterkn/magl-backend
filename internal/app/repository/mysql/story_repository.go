@@ -33,16 +33,12 @@ func (r *StoryRepositoryImpl) Create(ctx context.Context, storyEntity *entity.St
 			"categoryId":  storyEntity.Category.Id[:],
 			"episode":     storyEntity.Episode,
 			"description": storyEntity.Description,
-			"createdAt":   storyEntity.CreatedAt,
-			"updatedAt":   storyEntity.UpdatedAt,
-		}
-		if storyEntity.ImageUrl == nil {
-			queryMap["imageUrl"] = sql.NullString{
-				String: "",
-				Valid:  false,
-			}
-		} else {
-			queryMap["imageUrl"] = *storyEntity.ImageUrl
+			"imageUrl": sql.NullString{
+				String: storyEntity.ImageUrl.Url,
+				Valid:  bool(storyEntity.ImageUrl.Availability),
+			},
+			"createdAt": storyEntity.CreatedAt,
+			"updatedAt": storyEntity.UpdatedAt,
 		}
 		_, err := tx.NamedExec(query, queryMap)
 		return err
@@ -120,29 +116,27 @@ func (r *StoryRepositoryImpl) toEntity(storyModel *model.StoryAndCategoryModel) 
 	if err != nil {
 		return nil, err
 	}
-	var imageUrl *string = nil
-	if storyModel.ImageUrl.Valid {
-		imageUrl = &storyModel.ImageUrl.String
-	}
-	var categoryImageUrl *string = nil
-	if storyModel.CategoryImageUrl.Valid {
-		categoryImageUrl = &storyModel.CategoryImageUrl.String
-	}
 	return &entity.StoryEntity{
 		Id: id,
 		Category: entity.CategoryEntity{
 			Id:          categoryId,
 			Name:        storyModel.CategoryName,
 			Description: storyModel.CategoryDescription,
-			ImageUrl:    categoryImageUrl,
-			CreatedAt:   storyModel.CategoryCreatedAt,
-			UpdatedAt:   storyModel.CategoryUpdatedAt,
+			ImageUrl: &entity.ImageUrlEntity{
+				Url:          storyModel.CategoryImageUrl.String,
+				Availability: entity.Availability(storyModel.CategoryImageUrl.Valid),
+			},
+			CreatedAt: storyModel.CategoryCreatedAt,
+			UpdatedAt: storyModel.CategoryUpdatedAt,
 		},
 		Title:       storyModel.Title,
 		Episode:     storyModel.Episode,
 		Description: storyModel.Description,
-		ImageUrl:    imageUrl,
-		CreatedAt:   storyModel.CreatedAt,
-		UpdatedAt:   storyModel.UpdatedAt,
+		ImageUrl: &entity.ImageUrlEntity{
+			Url:          storyModel.ImageUrl.String,
+			Availability: entity.Availability(storyModel.ImageUrl.Valid),
+		},
+		CreatedAt: storyModel.CreatedAt,
+		UpdatedAt: storyModel.UpdatedAt,
 	}, nil
 }

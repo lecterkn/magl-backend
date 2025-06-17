@@ -31,16 +31,12 @@ func (r *CategoryRepositoryImpl) Create(ctx context.Context, categoryEntity *ent
 			"id":          categoryEntity.Id[:],
 			"name":        categoryEntity.Name,
 			"description": categoryEntity.Description,
-			"createdAt":   categoryEntity.CreatedAt,
-			"updatedAt":   categoryEntity.UpdatedAt,
-		}
-		if categoryEntity.ImageUrl == nil {
-			queryMap["imageUrl"] = sql.NullString{
-				String: "",
-				Valid:  false,
-			}
-		} else {
-			queryMap["imageUrl"] = *categoryEntity.ImageUrl
+			"imageUrl": sql.NullString{
+				String: categoryEntity.ImageUrl.Url,
+				Valid:  bool(categoryEntity.ImageUrl.Availability),
+			},
+			"createdAt": categoryEntity.CreatedAt,
+			"updatedAt": categoryEntity.UpdatedAt,
 		}
 		_, err := tx.NamedExec(query, queryMap)
 		return err
@@ -106,15 +102,11 @@ func (r *CategoryRepositoryImpl) toEntity(categoryModel *model.CategoryModel) (*
 	if err != nil {
 		return nil, err
 	}
-	var imageUrl *string = nil
-	if categoryModel.ImageUrl.Valid {
-		imageUrl = &categoryModel.ImageUrl.String
-	}
 	return &entity.CategoryEntity{
 		Id:          id,
 		Name:        categoryModel.Name,
 		Description: categoryModel.Description,
-		ImageUrl:    imageUrl,
+		ImageUrl:    entity.NewImageUrl(categoryModel.ImageUrl.String, entity.Availability(categoryModel.ImageUrl.Valid)),
 		CreatedAt:   categoryModel.CreatedAt,
 		UpdatedAt:   categoryModel.UpdatedAt,
 	}, nil
